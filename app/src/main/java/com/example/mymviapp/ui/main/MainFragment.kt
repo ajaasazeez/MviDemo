@@ -1,5 +1,6 @@
 package com.example.mymviapp.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.mymviapp.R
+import com.example.mymviapp.ui.DataStateListener
 import com.example.mymviapp.ui.main.state.MainStateEvent
 
 class MainFragment:Fragment() {
     lateinit var viewModel: MainViewModel
+    lateinit var dataStateHandler: DataStateListener
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,16 +30,32 @@ class MainFragment:Fragment() {
         }?: throw Exception("Invalid Activity")
 
         subscribeObservers()
+        triggerGetNewsEvent()
     }
 
     private fun subscribeObservers(){
         viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
 
             println("DEBUG: DataState: ${dataState}")
-            dataState.news?.let{
-                // set News data
-                viewModel.setNews(it)
+
+            // handle Data<T>
+            dataState.data?.let{ mainViewState ->
+                mainViewState.news?.let{
+                    // set BlogPosts data
+                    viewModel.setNews(it)
+                }
             }
+
+            // Handle Progress bar?
+            dataState.loading.let{
+                println("DEBUG: LOADING: ${it}")
+            }
+
+            // Handle message?
+            dataState.message?.let{
+                println("DEBUG: MESSAGE: ${it}")
+            }
+
         })
 
         viewModel.viewState.observe(viewLifecycleOwner, Observer {viewState ->
@@ -50,5 +69,15 @@ class MainFragment:Fragment() {
 
     fun triggerGetNewsEvent(){
         viewModel.setStateEvent(MainStateEvent.GetNewsEvent())
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try{
+            dataStateHandler = context as DataStateListener
+        }catch(e: ClassCastException){
+            println("$context must implement DataStateListener")
+        }
+
     }
 }

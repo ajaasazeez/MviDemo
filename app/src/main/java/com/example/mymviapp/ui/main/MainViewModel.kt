@@ -5,9 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import com.example.mymviapp.model.NewsModel
+import com.example.mymviapp.repository.MainRepository
 import com.example.mymviapp.ui.main.state.MainStateEvent
 import com.example.mymviapp.ui.main.state.MainViewState
 import com.example.mymviapp.utils.AbsentLiveData
+import com.example.mymviapp.utils.DataState
 
 class MainViewModel : ViewModel() {
     private val _stateEvent: MutableLiveData<MainStateEvent> = MutableLiveData()
@@ -16,18 +18,18 @@ class MainViewModel : ViewModel() {
     val viewState: LiveData<MainViewState>
         get() = _viewState
 
-    val dataState: LiveData<MainViewState> = Transformations
-        .switchMap(_stateEvent) { stateEvent ->
+    val dataState: LiveData<DataState<MainViewState>> = Transformations
+        .switchMap(_stateEvent){stateEvent ->
             stateEvent?.let {
                 handleStateEvent(stateEvent)
             }
         }
 
-    fun handleStateEvent(stateEvent: MainStateEvent): LiveData<MainViewState> {
+    fun handleStateEvent(stateEvent: MainStateEvent):LiveData<DataState<MainViewState>>{
         return when (stateEvent) {
 
             is MainStateEvent.GetNewsEvent -> {
-                AbsentLiveData.create()
+                MainRepository.getNews()
             }
 
             is MainStateEvent.None -> {
