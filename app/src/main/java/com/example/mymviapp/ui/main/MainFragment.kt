@@ -8,13 +8,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mymviapp.R
 import com.example.mymviapp.ui.DataStateListener
 import com.example.mymviapp.ui.main.state.MainStateEvent
+import com.example.mymviapp.ui.main.state.MainViewState
+import com.example.mymviapp.utils.DataState
+import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainFragment:Fragment() {
     lateinit var viewModel: MainViewModel
     lateinit var dataStateHandler: DataStateListener
+    lateinit var mainRecyclerAdapter: MainListAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,45 +35,54 @@ class MainFragment:Fragment() {
         }?: throw Exception("Invalid Activity")
 
         subscribeObservers()
+        initRecyclerView()
         triggerGetNewsEvent()
     }
 
     private fun subscribeObservers(){
         viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
+            handleDataState(dataState)
+        })
 
-            println("DEBUG: DataState: ${dataState}")
+        viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
+            handleViewState(viewState)
+        })
+    }
 
-            // handle Data<T>
-            dataState.data?.let{ mainViewState ->
-                mainViewState.news?.let{
-                    // set BlogPosts data
-                    viewModel.setNews(it)
+    fun handleDataState(dataState: DataState<MainViewState>){
+        println("DEBUG: DataState: ${dataState}")
+        // Handle Loading and Message
+        dataStateHandler.onDataStateChange(dataState)
+
+        // Handle Data<T>
+        dataState.data?.let{ event ->
+            event.getContentIfNotHandled()?.let{ viewState ->
+                viewState.news?.let { news ->
+                    viewModel.setNews(news)
                 }
             }
+        }
+    }
 
-            // Handle Progress bar?
-            dataState.loading.let{
-                println("DEBUG: LOADING: ${it}")
-            }
+    fun handleViewState(viewState: MainViewState){
+        println("DEBUG: ViewState: ${viewState}")
+        viewState.news?.let{ news ->
+            // Set recyclerview data
+            mainRecyclerAdapter.submitList(news)
 
-            // Handle message?
-            dataState.message?.let{
-                println("DEBUG: MESSAGE: ${it}")
-            }
-
-        })
-
-        viewModel.viewState.observe(viewLifecycleOwner, Observer {viewState ->
-            viewState.news?.let {
-                // set News data to RecyclerView
-                println("DEBUG: Setting news to RecyclerView: ${viewState.news}")
-            }
-
-        })
+        }
     }
 
     fun triggerGetNewsEvent(){
         viewModel.setStateEvent(MainStateEvent.GetNewsEvent())
+    }
+
+    private fun initRecyclerView(){
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(activity)
+            mainRecyclerAdapter = MainListAdapter()
+            adapter = mainRecyclerAdapter
+        }
     }
 
     override fun onAttach(context: Context) {

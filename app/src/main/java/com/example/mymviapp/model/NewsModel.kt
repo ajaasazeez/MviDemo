@@ -5,16 +5,19 @@ import com.google.gson.annotations.SerializedName
 
 class NewsModel (
     @Expose
+    @SerializedName("id")
+    val id: String? = null,
+    @Expose
     @SerializedName("title")
     val title: String? = null,
     @Expose
-    @SerializedName("url")
-    val url: String? = null,
+    @SerializedName("imageUrl")
+    val imageUrl: String? = null,
     @Expose
     @SerializedName("newsSite")
     val newsSite: String? = null
 ){
     override fun toString(): String {
-        return "NewsModel(title=$title, url=$url, newsSite=$newsSite)"
+        return "NewsModel(title=$title, url=$imageUrl, newsSite=$newsSite)"
     }
 }

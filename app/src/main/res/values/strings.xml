@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MyMviApp</string>
+    <string name="space_news">Space News</string>
 </resources>
