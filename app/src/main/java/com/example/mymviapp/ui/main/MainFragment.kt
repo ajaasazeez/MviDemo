@@ -17,12 +17,14 @@ import com.example.mymviapp.ui.main.state.MainStateEvent
 import com.example.mymviapp.ui.main.state.MainViewState
 import com.example.mymviapp.utils.DataState
 import kotlinx.android.synthetic.main.fragment_main.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainFragment:Fragment(){
 
-    private val newsViewModel: MainViewModel by viewModels() {
+   /* private val newsViewModel: MainViewModel by viewModels() {
         MainViewModel.MainViewModelFactory((activity?.application as NewsApplication).repository)
-    }
+    }*/
+   val newsViewModel: MainViewModel by viewModel()
 
     lateinit var dataStateHandler: DataStateListener
     lateinit var mainRecyclerAdapter: MainListAdapter

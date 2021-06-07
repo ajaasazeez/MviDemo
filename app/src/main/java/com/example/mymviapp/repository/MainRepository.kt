@@ -2,7 +2,8 @@ package com.example.mymviapp.repository
 
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import com.example.mymviapp.api.RetrofitBuilder
+import com.example.mymviapp.api.ApiService
+
 import com.example.mymviapp.databse.DataAccessObject
 import com.example.mymviapp.model.NewsModel
 import com.example.mymviapp.ui.main.state.MainViewState
@@ -12,7 +13,7 @@ import com.example.mymviapp.utils.GenericApiResponse
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class MainRepository(val newsDao: DataAccessObject) {
+class MainRepository(val newsDao: DataAccessObject,val apiService: ApiService) {
 
     fun getNews(): LiveData<DataState<MainViewState>> {
         return object : NetworkBoundResource<List<NewsModel>, MainViewState>() {
@@ -34,7 +35,7 @@ class MainRepository(val newsDao: DataAccessObject) {
             }
 
             override fun createCall(): LiveData<GenericApiResponse<List<NewsModel>>> {
-                return RetrofitBuilder.apiService.getNews()
+                return apiService.getNews()
             }
 
             override fun handleApiErrorResponse(message: String) {

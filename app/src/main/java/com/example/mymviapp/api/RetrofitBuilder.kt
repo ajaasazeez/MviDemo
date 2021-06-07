@@ -4,6 +4,7 @@ import com.example.mymviapp.utils.LiveDataCallAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+/*
 object RetrofitBuilder {
     const val BASE_URL: String = "https://api.spaceflightnewsapi.net/v3/"
 
@@ -21,3 +22,4 @@ object RetrofitBuilder {
             .create(ApiService::class.java)
     }
 }
+*/
