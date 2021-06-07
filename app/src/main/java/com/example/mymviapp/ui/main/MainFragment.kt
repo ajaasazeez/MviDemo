@@ -6,9 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mymviapp.NewsApplication
 import com.example.mymviapp.R
 import com.example.mymviapp.ui.DataStateListener
 import com.example.mymviapp.ui.main.state.MainStateEvent
@@ -16,8 +18,12 @@ import com.example.mymviapp.ui.main.state.MainViewState
 import com.example.mymviapp.utils.DataState
 import kotlinx.android.synthetic.main.fragment_main.*
 
-class MainFragment:Fragment() {
-    lateinit var viewModel: MainViewModel
+class MainFragment:Fragment(){
+
+    private val newsViewModel: MainViewModel by viewModels() {
+        MainViewModel.MainViewModelFactory((activity?.application as NewsApplication).repository)
+    }
+
     lateinit var dataStateHandler: DataStateListener
     lateinit var mainRecyclerAdapter: MainListAdapter
     override fun onCreateView(
@@ -30,21 +36,17 @@ class MainFragment:Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = activity?.run {
-            ViewModelProvider(this).get(MainViewModel::class.java)
-        }?: throw Exception("Invalid Activity")
-
         subscribeObservers()
         initRecyclerView()
         triggerGetNewsEvent()
     }
 
     private fun subscribeObservers(){
-        viewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
+        newsViewModel.dataState.observe(viewLifecycleOwner, Observer { dataState ->
             handleDataState(dataState)
         })
 
-        viewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
+        newsViewModel.viewState.observe(viewLifecycleOwner, Observer { viewState ->
             handleViewState(viewState)
         })
     }
@@ -58,7 +60,7 @@ class MainFragment:Fragment() {
         dataState.data?.let{ event ->
             event.getContentIfNotHandled()?.let{ viewState ->
                 viewState.news?.let { news ->
-                    viewModel.setNews(news)
+                    newsViewModel.setNews(news)
                 }
             }
         }
@@ -74,7 +76,7 @@ class MainFragment:Fragment() {
     }
 
     fun triggerGetNewsEvent(){
-        viewModel.setStateEvent(MainStateEvent.GetNewsEvent())
+        newsViewModel.setStateEvent(MainStateEvent.GetNewsEvent())
     }
 
     private fun initRecyclerView(){

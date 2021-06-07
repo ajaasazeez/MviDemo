@@ -1,10 +1,12 @@
 package com.example.mymviapp.ui.main
 
-import androidx.appcompat.app.AppCompatActivity
+
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+
 import com.example.mymviapp.R
 import com.example.mymviapp.ui.DataStateListener
 import com.example.mymviapp.utils.DataState
@@ -12,11 +14,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(),DataStateListener {
 
-    lateinit var viewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         showMainFragment()
     }
 

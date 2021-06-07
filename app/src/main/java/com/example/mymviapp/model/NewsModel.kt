@@ -1,12 +1,15 @@
 package com.example.mymviapp.model
 
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-
-class NewsModel (
+@Entity
+data class NewsModel (
     @Expose
     @SerializedName("id")
-    val id: String? = null,
+    @PrimaryKey val id: String,
     @Expose
     @SerializedName("title")
     val title: String? = null,

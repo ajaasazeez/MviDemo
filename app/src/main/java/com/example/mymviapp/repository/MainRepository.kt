@@ -1,22 +1,34 @@
 package com.example.mymviapp.repository
 
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import com.example.mymviapp.api.RetrofitBuilder
+import com.example.mymviapp.databse.DataAccessObject
 import com.example.mymviapp.model.NewsModel
 import com.example.mymviapp.ui.main.state.MainViewState
-import com.example.mymviapp.utils.*
+import com.example.mymviapp.utils.ApiSuccessResponse
+import com.example.mymviapp.utils.DataState
+import com.example.mymviapp.utils.GenericApiResponse
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
-object MainRepository {
+class MainRepository(val newsDao: DataAccessObject) {
 
     fun getNews(): LiveData<DataState<MainViewState>> {
-        return object: NetworkBoundResource<List<NewsModel>, MainViewState>(){
+        return object : NetworkBoundResource<List<NewsModel>, MainViewState>() {
 
             override fun handleApiSuccessResponse(response: ApiSuccessResponse<List<NewsModel>>) {
-                result.value = DataState.data(
-                    null,
-                    MainViewState(
-                        news = response.body
+
+                GlobalScope.launch {
+                    insert(response.body)
+                }
+
+                result.postValue(
+                    DataState.data(
+                        null,
+                        MainViewState(
+                            news = response.body
+                        )
                     )
                 )
             }
@@ -25,6 +37,28 @@ object MainRepository {
                 return RetrofitBuilder.apiService.getNews()
             }
 
+            override fun handleApiErrorResponse(message: String) {
+                GlobalScope.launch {
+
+                    result.postValue(
+                        DataState.data(
+                            null,
+                            MainViewState(news = newsDao.getAllNews())
+                        )
+                    )
+                }
+            }
+
         }.asLiveData()
     }
+
+    // By default Room runs suspend queries off the main thread, therefore, we don't need to
+    // implement anything else to ensure we're not doing long running database work
+    // off the main thread.
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insert(newsModel: List<NewsModel>) {
+        newsDao.addNews(newsModel)
+    }
+
 }

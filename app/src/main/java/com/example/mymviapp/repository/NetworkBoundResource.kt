@@ -38,11 +38,13 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType> {
             }
             is ApiErrorResponse ->{
                 println("DEBUG: NetworkBoundResource: ${response.errorMessage}")
-                onReturnError(response.errorMessage)
+//                onReturnError(response.errorMessage)
+                handleApiErrorResponse(response.errorMessage)
             }
             is ApiEmptyResponse ->{
                 println("DEBUG: NetworkBoundResource: Request returned NOTHING (HTTP 204)")
-                onReturnError("HTTP 204. Returned NOTHING.")
+//                onReturnError("HTTP 204. Returned NOTHING.")
+                handleApiErrorResponse("HTTP 204. Returned NOTHING.")
             }
         }
     }
@@ -52,6 +54,8 @@ abstract class NetworkBoundResource<ResponseObject, ViewStateType> {
     }
 
     abstract fun handleApiSuccessResponse(response: ApiSuccessResponse<ResponseObject>)
+
+    abstract fun handleApiErrorResponse(message:String)
 
     abstract fun createCall(): LiveData<GenericApiResponse<ResponseObject>>
 
