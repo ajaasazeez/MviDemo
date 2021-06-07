@@ -3,16 +3,13 @@ package com.example.mymviapp.ui.main
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-
 import com.example.mymviapp.R
 import com.example.mymviapp.ui.DataStateListener
 import com.example.mymviapp.utils.DataState
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(),DataStateListener {
+class MainActivity : AppCompatActivity(), DataStateListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,38 +17,29 @@ class MainActivity : AppCompatActivity(),DataStateListener {
         showMainFragment()
     }
 
-    fun showMainFragment(){
+    private fun showMainFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer,
-                MainFragment(), "MainFragment")
+            .replace(
+                R.id.fragmentContainer,
+                MainFragment(), "MainFragment"
+            )
             .commit()
     }
 
     override fun onDataStateChange(dataState: DataState<*>?) {
-        dataState?.let{
+        dataState?.let {
             // Handle loading
             showProgressBar(dataState.loading)
 
-            // Handle Message
-            dataState.message?.let{ event ->
-                event.getContentIfNotHandled()?.let {message->
-                    showToast(message)
-                }
-
-            }
         }
     }
 
-    fun showToast(message: String){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
 
-    fun showProgressBar(isVisible: Boolean){
-        if(isVisible){
+    private fun showProgressBar(isVisible: Boolean) {
+        if (isVisible)
             progressBar.visibility = View.VISIBLE
-        }
-        else{
+        else
             progressBar.visibility = View.INVISIBLE
-        }
+
     }
 }

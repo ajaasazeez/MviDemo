@@ -4,7 +4,7 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import com.example.mymviapp.api.ApiService
 
-import com.example.mymviapp.databse.DataAccessObject
+import com.example.mymviapp.database.DataAccessObject
 import com.example.mymviapp.model.NewsModel
 import com.example.mymviapp.ui.main.state.MainViewState
 import com.example.mymviapp.utils.ApiSuccessResponse
@@ -18,8 +18,12 @@ class MainRepository(val newsDao: DataAccessObject,val apiService: ApiService) {
     fun getNews(): LiveData<DataState<MainViewState>> {
         return object : NetworkBoundResource<List<NewsModel>, MainViewState>() {
 
-            override fun handleApiSuccessResponse(response: ApiSuccessResponse<List<NewsModel>>) {
+            override fun createCall(): LiveData<GenericApiResponse<List<NewsModel>>> {
+                return apiService.getNews()
+            }
 
+            override fun handleApiSuccessResponse(response: ApiSuccessResponse<List<NewsModel>>) {
+                //caching the response
                 GlobalScope.launch {
                     insert(response.body)
                 }
@@ -34,13 +38,9 @@ class MainRepository(val newsDao: DataAccessObject,val apiService: ApiService) {
                 )
             }
 
-            override fun createCall(): LiveData<GenericApiResponse<List<NewsModel>>> {
-                return apiService.getNews()
-            }
-
             override fun handleApiErrorResponse(message: String) {
                 GlobalScope.launch {
-
+                    //set data from cache on network failure
                     result.postValue(
                         DataState.data(
                             null,

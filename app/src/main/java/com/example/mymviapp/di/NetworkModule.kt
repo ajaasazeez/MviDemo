@@ -1,18 +1,11 @@
 package com.example.mymviapp.di
 
-import android.app.Application
-import androidx.room.Room
 import com.example.mymviapp.api.ApiService
-import com.example.mymviapp.databse.DataAccessObject
-import com.example.mymviapp.databse.NewsDatabase
-import com.example.mymviapp.repository.MainRepository
-import com.example.mymviapp.ui.main.MainViewModel
+import com.example.mymviapp.utils.Constants
 import com.example.mymviapp.utils.LiveDataCallAdapterFactory
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.android.ext.koin.androidApplication
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -49,11 +42,10 @@ val networkModule = module {
 
     factory {
         provideRetrofit(
-            get(), get(), "https://api.spaceflightnewsapi.net/v3/"
+            get(), get(), Constants.BASE_URL
         )
     }
     factory { provideConverterFactory() }
-
     single { provideHttpClient() }
     single { api(get()) }
 

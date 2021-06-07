@@ -12,7 +12,7 @@ import com.example.mymviapp.model.NewsModel
 import kotlinx.android.synthetic.main.layout_news_item.view.*
 
 
-class MainListAdapter() :
+class MainListAdapter :
     ListAdapter<NewsModel, MainListAdapter.NewsViewHolder>(NewsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = NewsViewHolder(

@@ -1,11 +1,10 @@
-package com.example.mymviapp.databse
+package com.example.mymviapp.database
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.mymviapp.model.NewsModel
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DataAccessObject {

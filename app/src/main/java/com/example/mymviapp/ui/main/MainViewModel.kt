@@ -1,7 +1,9 @@
 package com.example.mymviapp.ui.main
 
-import androidx.lifecycle.*
-import com.example.mymviapp.databse.DataAccessObject
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
 import com.example.mymviapp.model.NewsModel
 import com.example.mymviapp.repository.MainRepository
 import com.example.mymviapp.ui.main.state.MainStateEvent
@@ -9,7 +11,7 @@ import com.example.mymviapp.ui.main.state.MainViewState
 import com.example.mymviapp.utils.AbsentLiveData
 import com.example.mymviapp.utils.DataState
 
-class MainViewModel (val repository: MainRepository): ViewModel() {
+class MainViewModel(private val repository: MainRepository) : ViewModel() {
 
 
     private val _stateEvent: MutableLiveData<MainStateEvent> = MutableLiveData()
@@ -26,7 +28,7 @@ class MainViewModel (val repository: MainRepository): ViewModel() {
             }
         }
 
-    fun handleStateEvent(stateEvent: MainStateEvent): LiveData<DataState<MainViewState>> {
+    private fun handleStateEvent(stateEvent: MainStateEvent): LiveData<DataState<MainViewState>> {
         return when (stateEvent) {
 
             is MainStateEvent.GetNewsEvent -> {
@@ -45,27 +47,15 @@ class MainViewModel (val repository: MainRepository): ViewModel() {
         _viewState.value = update
     }
 
-    fun getCurrentViewStateOrNew(): MainViewState {
-        val value = viewState.value?.let {
+    private fun getCurrentViewStateOrNew(): MainViewState {
+        return viewState.value?.let {
             it
         } ?: MainViewState()
-        return value
     }
 
     fun setStateEvent(event: MainStateEvent) {
-        val state: MainStateEvent
-        state = event
+        val state: MainStateEvent = event
         _stateEvent.value = state
     }
 
-    class MainViewModelFactory(private val repository: MainRepository) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                @Suppress("UNCHECKED_CAST")
-                return MainViewModel(repository) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
-
-    }
 }

@@ -2,8 +2,8 @@ package com.example.mymviapp.di
 
 import android.app.Application
 import androidx.room.Room
-import com.example.mymviapp.databse.DataAccessObject
-import com.example.mymviapp.databse.NewsDatabase
+import com.example.mymviapp.database.DataAccessObject
+import com.example.mymviapp.database.NewsDatabase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 

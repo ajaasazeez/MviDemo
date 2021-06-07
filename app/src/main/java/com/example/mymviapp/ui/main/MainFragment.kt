@@ -21,10 +21,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainFragment:Fragment(){
 
-   /* private val newsViewModel: MainViewModel by viewModels() {
-        MainViewModel.MainViewModelFactory((activity?.application as NewsApplication).repository)
-    }*/
-   val newsViewModel: MainViewModel by viewModel()
+   private val newsViewModel: MainViewModel by viewModel()
 
     lateinit var dataStateHandler: DataStateListener
     lateinit var mainRecyclerAdapter: MainListAdapter
@@ -53,7 +50,7 @@ class MainFragment:Fragment(){
         })
     }
 
-    fun handleDataState(dataState: DataState<MainViewState>){
+    private fun handleDataState(dataState: DataState<MainViewState>){
         println("DEBUG: DataState: ${dataState}")
         // Handle Loading and Message
         dataStateHandler.onDataStateChange(dataState)
@@ -68,7 +65,7 @@ class MainFragment:Fragment(){
         }
     }
 
-    fun handleViewState(viewState: MainViewState){
+    private fun handleViewState(viewState: MainViewState){
         println("DEBUG: ViewState: ${viewState}")
         viewState.news?.let{ news ->
             // Set recyclerview data
@@ -77,8 +74,8 @@ class MainFragment:Fragment(){
         }
     }
 
-    fun triggerGetNewsEvent(){
-        newsViewModel.setStateEvent(MainStateEvent.GetNewsEvent())
+    private fun triggerGetNewsEvent(){
+        newsViewModel.setStateEvent(MainStateEvent.GetNewsEvent)
     }
 
     private fun initRecyclerView(){
